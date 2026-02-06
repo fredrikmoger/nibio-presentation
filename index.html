@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlas.co - Collaborative Cloud GIS Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           Atlas Brand Guidelines - Presentation Styles
+           ============================================ */
+
+        :root {
+            /* Brand Colors */
+            --primary: #0E58FF;
+            --primary-light: #BAD4FF;
+            --highlight: #FF7462;
+            --highlight-light: #FFCCC3;
+            --marker: #FFC700;
+            --text-primary: #0E101B;
+            --text-secondary: #667588;
+            --border: #E7EEF4;
+            --bg-01: #FFFFFF;
+            --bg-02: #F2F6F9;
+
+            /* Gradients */
+            --gradient-01-start: #C2E5FF;
+            --gradient-01-end: #EFF5FF;
+            --gradient-02-start: #C2E5FF;
+            --gradient-02-end: #FEEAE7;
+            --gradient-03-start: #FFCCC3;
+            --gradient-03-end: #FEEAE7;
+            --gradient-04-start: #FFCCC3;
+            --gradient-04-end: #EFF5FF;
+        }
+
+        /* Reset & Base */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-01);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Slide Container */
+        .slides-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 80px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease, visibility 0.6s ease, transform 0.6s ease;
+            transform: translateX(40px);
+            overflow: hidden;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        .slide.prev {
+            transform: translateX(-40px);
+        }
+
+        /* Dot Grid Pattern (brand signature) */
+        .dot-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .dot-grid::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle, var(--primary-light) 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.4;
+        }
+
+        .slide-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1200px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 56px;
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            font-size: 44px;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -1px;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.3;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        p {
+            font-size: 18px;
+            font-weight: 400;
+            line-height: 1.65;
+            color: var(--text-secondary);
+        }
+
+        .subtitle {
+            font-size: 22px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .tagline {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+        }
+
+        /* ============================================
+           Slide-Specific Layouts
+           ============================================ */
+
+        /* Slide 1: Title */
+        .slide-title {
+            background: linear-gradient(135deg, var(--gradient-01-start), var(--gradient-02-end));
+        }
+
+        .slide-title .slide-content {
+            align-items: flex-start;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .atlas-logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .atlas-logo-img {
+            height: 56px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .slide-title h1 {
+            font-size: 64px;
+            max-width: 800px;
+        }
+
+        .slide-title .tagline {
+            font-size: 24px;
+            opacity: 0.9;
+        }
+
+        /* Two-column layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .two-col .col-text {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .two-col .col-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Screenshot image */
+        .screenshot-img {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 8px 40px rgba(14, 16, 27, 0.12), 0 2px 12px rgba(14, 16, 27, 0.06);
+            object-fit: cover;
+        }
+
+        /* Bullet list */
+        .bullet-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .bullet-list li {
+            font-size: 18px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            padding-left: 28px;
+            position: relative;
+        }
+
+        .bullet-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            background: var(--primary);
+        }
+
+        .bullet-list li strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Icon Grid (Capabilities) */
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            width: 100%;
+        }
+
+        .icon-card {
+            background: var(--bg-01);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .icon-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(14, 88, 255, 0.1);
+        }
+
+        .icon-card .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .icon-card .card-icon.blue { background: var(--primary-light); }
+        .icon-card .card-icon.coral { background: var(--highlight-light); }
+        .icon-card .card-icon.yellow { background: #FFF3CC; }
+
+        .icon-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        .icon-card p {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Section Divider */
+        .slide-divider {
+            background: var(--text-primary);
+        }
+
+        .slide-divider .dot-grid::before {
+            background-image: radial-gradient(circle, rgba(14, 88, 255, 0.3) 1px, transparent 1px);
+            opacity: 0.5;
+        }
+
+        .slide-divider h1 {
+            color: var(--bg-01);
+            font-size: 72px;
+        }
+
+        .slide-divider .subtitle {
+            color: var(--primary-light);
+        }
+
+        /* ============================================
+           Full-Bleed Image Layout (Slide 4)
+           ============================================ */
+        .layout-fullbleed {
+            padding: 0;
+        }
+
+        .layout-fullbleed .slide-content {
+            max-width: none;
+            flex-direction: row;
+            height: 100%;
+        }
+
+        .fullbleed-text {
+            width: 45%;
+            padding: 60px 64px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+            flex-shrink: 0;
+        }
+
+        .fullbleed-image {
+            width: 55%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fullbleed-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .fullbleed-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 80px;
+            height: 100%;
+            background: linear-gradient(90deg, var(--bg-01), transparent);
+            z-index: 1;
+        }
+
+        /* ============================================
+           Image Top + Columns Layout (Slide 5)
+           ============================================ */
+        .layout-img-top .slide-content {
+            gap: 0;
+        }
+
+        .img-top-visual {
+            width: 100%;
+            height: 40%;
+            border-radius: 16px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .img-top-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .img-top-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 28px;
+            padding-top: 32px;
+            flex: 1;
+            align-content: start;
+        }
+
+        .img-top-content .content-col {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .img-top-content .content-col h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .img-top-content .content-col p {
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+        .content-col .col-accent {
+            width: 32px;
+            height: 3px;
+            border-radius: 2px;
+            background: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .content-col .col-accent.coral { background: var(--highlight); }
+        .content-col .col-accent.yellow { background: var(--marker); }
+        .content-col .col-accent.dark { background: var(--text-primary); }
+
+        /* ============================================
+           Feature Highlight Layout (Slide 7)
+           ============================================ */
+        .feature-highlight-wrapper {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 48px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .feature-number {
+            font-size: 160px;
+            font-weight: 900;
+            color: var(--primary-light);
+            line-height: 1;
+            letter-spacing: -8px;
+        }
+
+        .feature-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            border-left: 4px solid var(--primary);
+            padding-left: 32px;
+        }
+
+        .feature-detail h2 {
+            margin-bottom: 8px;
+        }
+
+        .feature-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .feature-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 12px;
+            background: var(--bg-02);
+            border: 1px solid var(--border);
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .feature-pill:hover {
+            border-color: var(--primary-light);
+            background: rgba(14, 88, 255, 0.04);
+        }
+
+        .feature-pill .pill-icon {
+            font-size: 18px;
+        }
+
+        /* ============================================
+           Stats Row Layout (Slide 8)
+           ============================================ */
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 64px;
+            width: 100%;
+            padding: 40px 0;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 8px;
+        }
+
+        .stat-number {
+            font-size: 64px;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+            letter-spacing: -2px;
+        }
+
+        .stat-number.coral { color: var(--highlight); }
+        .stat-number.yellow { color: var(--marker); }
+
+        .stat-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stat-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            max-width: 180px;
+        }
+
+        .stats-divider {
+            width: 1px;
+            background: var(--border);
+            align-self: stretch;
+        }
+
+        /* ============================================
+           Big Statement Layout (Slide 10)
+           ============================================ */
+        .layout-statement {
+            background: linear-gradient(135deg, var(--gradient-01-start), var(--gradient-04-end));
+        }
+
+        .layout-statement .slide-content {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .statement-accent {
+            width: 64px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+            margin-bottom: 32px;
+        }
+
+        .layout-statement h1 {
+            font-size: 52px;
+            max-width: 900px;
+            line-height: 1.2;
+        }
+
+        .layout-statement .subtitle {
+            max-width: 640px;
+            margin-top: 24px;
+        }
+
+        .statement-features {
+            display: flex;
+            gap: 32px;
+            margin-top: 48px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .statement-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 24px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .statement-feature .sf-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .statement-feature .sf-icon.blue { background: var(--primary-light); }
+        .statement-feature .sf-icon.coral { background: var(--highlight-light); }
+        .statement-feature .sf-icon.yellow { background: #FFF3CC; }
+
+        /* Navi AI Slide */
+        .navi-prompt {
+            background: var(--bg-01);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-top: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .navi-prompt .navi-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #6B3FA0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .navi-prompt .prompt-text {
+            font-size: 16px;
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .prompt-examples {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        /* Feature badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge.blue { background: var(--primary-light); color: var(--primary); }
+        .badge.coral { background: var(--highlight-light); color: var(--highlight); }
+        .badge.yellow { background: #FFF3CC; color: #B8860B; }
+
+        .badges-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+
+        /* Comparison columns */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            width: 100%;
+        }
+
+        .comparison-col {
+            border-radius: 16px;
+            padding: 36px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .comparison-col.current {
+            background: var(--bg-02);
+            border: 1px solid var(--border);
+        }
+
+        .comparison-col.atlas {
+            background: linear-gradient(135deg, rgba(14, 88, 255, 0.05), rgba(186, 212, 255, 0.3));
+            border: 1px solid var(--primary-light);
+        }
+
+        .comparison-col h3 {
+            font-size: 20px;
+        }
+
+        .check-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .check-list li {
+            font-size: 16px;
+            color: var(--text-secondary);
+            padding-left: 32px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .check-list li::before {
+            position: absolute;
+            left: 0;
+            top: 1px;
+            font-size: 16px;
+        }
+
+        .check-list.yes li::before { content: '\2713'; color: var(--primary); font-weight: 700; }
+        .check-list.neutral li::before { content: '\2022'; color: var(--text-secondary); }
+
+        /* Summary cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .summary-card {
+            background: var(--bg-01);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px 24px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .summary-card .card-number {
+            font-size: 40px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .summary-card h3 {
+            font-size: 16px;
+            margin-bottom: 0;
+        }
+
+        .summary-card p {
+            font-size: 14px;
+        }
+
+        /* Navigation */
+        .nav-controls {
+            position: fixed;
+            bottom: 32px;
+            right: 40px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg-01);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 18px;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nav-btn:disabled:hover {
+            background: var(--bg-01);
+            color: var(--text-primary);
+            border-color: var(--border);
+        }
+
+        .slide-counter {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--primary);
+            transition: width 0.4s ease;
+            z-index: 100;
+        }
+
+        /* Footer branding */
+        .slide-footer {
+            position: absolute;
+            bottom: 28px;
+            left: 80px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1;
+        }
+
+        .slide-footer .mini-globe {
+            width: 20px;
+            height: 20px;
+        }
+
+        .slide-footer .mini-globe img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .slide-footer span {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Divider footer override */
+        .slide-divider .slide-footer span {
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .slide.active .animate-in {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .slide.active .animate-left {
+            animation: fadeInLeft 0.5s ease forwards;
+        }
+
+        .slide.active .animate-scale {
+            animation: scaleIn 0.6s ease forwards;
+        }
+
+        .slide.active .animate-in:nth-child(1) { animation-delay: 0.1s; }
+        .slide.active .animate-in:nth-child(2) { animation-delay: 0.2s; }
+        .slide.active .animate-in:nth-child(3) { animation-delay: 0.3s; }
+        .slide.active .animate-in:nth-child(4) { animation-delay: 0.4s; }
+        .slide.active .animate-in:nth-child(5) { animation-delay: 0.5s; }
+        .slide.active .animate-in:nth-child(6) { animation-delay: 0.6s; }
+
+        .animate-in, .animate-left, .animate-scale {
+            opacity: 0;
+        }
+
+        /* Print styles */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 0;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .slides-container {
+                display: block;
+            }
+            .slide {
+                display: flex !important;
+                flex-direction: column;
+                justify-content: center;
+                position: relative;
+                opacity: 1 !important;
+                visibility: visible !important;
+                transform: none !important;
+                page-break-after: always;
+                page-break-inside: avoid;
+                width: 100vw;
+                height: 100vh;
+                min-height: 100vh;
+                padding: 80px;
+                box-sizing: border-box;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .slide:last-child {
+                page-break-after: auto;
+            }
+            .nav-controls, .progress-bar { display: none !important; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .slide { padding: 40px 48px; }
+            h1 { font-size: 42px; }
+            h2 { font-size: 34px; }
+            .two-col { grid-template-columns: 1fr; gap: 32px; }
+            .icon-grid { grid-template-columns: repeat(2, 1fr); }
+            .comparison { grid-template-columns: 1fr; }
+            .summary-grid { grid-template-columns: 1fr; }
+            .stats-row { flex-direction: column; gap: 32px; }
+            .fullbleed-text { width: 100%; }
+            .fullbleed-image { display: none; }
+            .img-top-content { grid-template-columns: 1fr 1fr; }
+            .feature-highlight-wrapper { grid-template-columns: 1fr; }
+            .feature-number { font-size: 80px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Slides -->
+    <div class="slides-container" id="slidesContainer">
+
+        <!-- ==========================================
+             SLIDE 1: Title (Layout: Hero)
+             ========================================== -->
+        <div class="slide slide-title active" data-slide="1">
+            <div class="dot-grid"></div>
+            <div class="slide-content">
+                <div class="animate-in">
+                    <img src="assets/atlas-logo.png" alt="Atlas" class="atlas-logo-img">
+                </div>
+                <h1 class="animate-in">Collaborative Cloud GIS Platform</h1>
+                <p class="subtitle animate-in">The modern way to create, analyze, and share geospatial data &mdash; together, in real time.</p>
+                <p class="tagline animate-in" style="margin-top: 8px;">Explore. Analyze. Share.</p>
+            </div>
+            <div class="slide-footer">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 2: What is Atlas? (Layout: Two-Col)
+             ========================================== -->
+        <div class="slide" data-slide="2">
+            <div class="dot-grid"></div>
+            <div class="slide-content">
+                <div class="two-col">
+                    <div class="col-text">
+                        <h2 class="animate-in">What is Atlas?</h2>
+                        <p class="animate-in">Atlas is a cloud-native GIS platform built for teams who need to work with spatial data without the complexity of traditional desktop tools.</p>
+                        <ul class="bullet-list animate-in">
+                            <li><strong>Browser-based</strong> &mdash; no installs, no licenses, accessible from anywhere</li>
+                            <li><strong>Real-time collaboration</strong> &mdash; multiple users editing the same map simultaneously</li>
+                            <li><strong>Modern experience</strong> &mdash; intuitive interface designed for both GIS professionals and non-experts</li>
+                        </ul>
+                        <div class="badges-row animate-in">
+                            <span class="badge blue">Cloud-native</span>
+                            <span class="badge coral">No desktop install</span>
+                        </div>
+                    </div>
+                    <div class="col-visual animate-in">
+                        <img src="assets/map-interface.png" alt="Atlas Platform" class="screenshot-img">
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 3: Core Capabilities (Layout: Card Grid)
+             ========================================== -->
+        <div class="slide" data-slide="3">
+            <div class="dot-grid"></div>
+            <div class="slide-content">
+                <h2 class="animate-in" style="text-align: center; margin-bottom: 40px;">Core Capabilities</h2>
+                <div class="icon-grid animate-in">
+                    <div class="icon-card">
+                        <div class="card-icon blue">
+                            <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" style="color: #0E58FF;">
+                                <path d="m10,2C5.59,2,2,5.59,2,10s3.59,8,8,8,8-3.59,8-8c0-4.41-3.59-7.99-8-8Zm-2.26,13.9c-2.14-.82-3.69-2.77-4-5.06h2.47c.12,1.82.66,3.59,1.53,5.06Zm8.53-5.06c-.31,2.29-1.87,4.24-4.01,5.06.87-1.48,1.41-3.24,1.53-5.06h2.47Zm-12.53-1.68c.31-2.29,1.87-4.24,4-5.06-.87,1.47-1.41,3.24-1.53,5.06h-2.47Zm4.15,0c.16-2.07.9-3.95,2.11-5.35,1.21,1.4,1.95,3.28,2.11,5.35h-4.22Zm4.22,1.68c-.16,2.07-.9,3.95-2.11,5.35-1.21-1.4-1.95-3.28-2.11-5.35h4.22Zm4.15-1.68h-2.47c-.12-1.82-.66-3.59-1.53-5.06,2.14.83,3.69,2.77,4,5.06Z" stroke-width="0"/>
+                            </svg>
+                        </div>
+                        <h3>Map Creation</h3>
+                        <p>Build interactive maps with multiple layers, custom styling, and rich annotations.</p>
+                    </div>
+                    <div class="icon-card">
+                        <div class="card-icon coral">
+                            <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" style="color: #FF7462;">
+                                <path d="m2.87,17.86c-.44,0-.79-.36-.79-.79s.36-.79.79-.79h.3c.06,0,.1-.04.1-.1v-3.56c0-.93.75-1.68,1.68-1.68h.89c.55,0,.99-.44.99-.99v-.89c0-.93.75-1.68,1.68-1.68h1.49c.55,0,.99-.44.99-.99v-.89c0-.93.75-1.68,1.68-1.68h2.38c.93,0,1.68.75,1.68,1.68v10.69c0,.06.04.1.1.1h.3c.44,0,.79.36.79.79s-.36.79-.79.79H2.87ZM13.56,5.39c-.55,0-.99.44-.99.99v8.91c0,.55.44.99.99.99h.59c.55,0,.99-.44.99-.99V6.38c0-.55-.44-.99-.99-.99h-.59Zm-4.16,3.56c-.55,0-.99.44-.99.99v5.34c0,.55.44.99.99.99h.59c.55,0,.99-.44.99-.99v-5.34c0-.55-.44-.99-.99-.99h-.59Zm-3.56,3.56c-.55,0-.99.44-.99.99v1.78c0,.55.44.99.99.99s.99-.44.99-.99v-1.78c0-.55-.44-.99-.99-.99Z" stroke-width="0"/>
+                            </svg>
+                        </div>
+                        <h3>Data Layers</h3>
+                        <p>Stack and manage vector, raster, and third-party data layers with full control.</p>
+                    </div>
+                    <div class="icon-card">
+                        <div class="card-icon yellow">
+                            <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" style="color: #FFC700;">
+                                <path d="m13.43,18c-.25,0-.46-.16-.54-.39l-.3-.9c-.11-.34-.38-.61-.72-.72l-.9-.3c-.23-.08-.39-.3-.39-.54s.16-.46.39-.54l.9-.3c.34-.11.61-.38.72-.72l.3-.9c.08-.23.3-.39.54-.39s.46.16.54.39l.3.9c.11.34.38.61.72.72l.9.3c.23.08.39.3.39.54s-.16.46-.39.54l-.9.3c-.34.11-.61.38-.72.72l-.3.9c-.08.23-.3.39-.54.39Zm-.7-2.86c.28.18.52.42.7.7.18-.28.42-.52.7-.7-.28-.18-.52-.42-.7-.7-.18.28-.42.52-.7.7Zm-5.02.57c-.26,0-.48-.17-.55-.41l-.62-2.17c-.27-.96-1.01-1.69-1.96-1.96l-2.17-.62c-.25-.07-.41-.29-.41-.55s.17-.48.41-.55l2.17-.62c.96-.27,1.69-1.01,1.96-1.96l.62-2.17c.07-.25.29-.41.55-.41h0c.26,0,.48.17.55.41l.62,2.17c.27.96,1.01,1.69,1.96,1.96l2.17.62c.25.07.41.29.41.55s-.17.48-.41.55l-2.17.62c-.96.27-1.69,1.01-1.96,1.96,0,0,0,0,0,0l-.62,2.17c-.07.25-.29.41-.55.41Zm-3.06-5.71l.25.07c1.34.38,2.36,1.41,2.75,2.75l.07.25.07-.25h0c.38-1.34,1.41-2.37,2.75-2.75l.25-.07-.25-.07c-1.34-.38-2.36-1.41-2.75-2.75l-.07-.25-.07.25c-.38,1.34-1.41,2.36-2.75,2.75l-.25.07Zm9.92-1.14c-.26,0-.49-.18-.55-.43l-.2-.79c-.18-.72-.74-1.28-1.46-1.46l-.79-.2c-.25-.06-.43-.29-.43-.55s.18-.49.43-.55l.79-.2c.72-.18,1.27-.74,1.45-1.46l.2-.79c.06-.25.29-.43.55-.43s.49.18.55.43l.2.79c.18.72.74,1.28,1.46,1.46l.79.2c.25.06.43.29.43.55s-.18.49-.43.55l-.79.2c-.72.18-1.28.74-1.46,1.46l-.2.79c-.06.25-.29.43-.55.43Zm-1.07-3.43c.44.26.81.63,1.07,1.07.26-.44.63-.81,1.07-1.07-.44-.26-.81-.63-1.07-1.07-.26.44-.63.81-1.07,1.07Z" stroke-width="0"/>
+                            </svg>
+                        </div>
+                        <h3>Collaboration</h3>
+                        <p>Work on the same map in real time. Comment, annotate, and review with your team.</p>
+                    </div>
+                    <div class="icon-card">
+                        <div class="card-icon blue">
+                            <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" style="color: #0E58FF;">
+                                <path d="m17.74,16.48l-4.54-4.54c.78-1.04,1.24-2.32,1.24-3.72,0-3.44-2.79-6.22-6.22-6.22s-6.22,2.79-6.22,6.22,2.79,6.22,6.22,6.22c1.4,0,2.68-.47,3.72-1.24l4.54,4.54c.35.35.91.35,1.26,0,.35-.35.35-.91,0-1.26ZM3.78,8.22c0-2.45,1.99-4.44,4.44-4.44s4.44,1.99,4.44,4.44-1.99,4.44-4.44,4.44-4.44-1.99-4.44-4.44Z" fill-rule="evenodd" stroke-width="0"/>
+                            </svg>
+                        </div>
+                        <h3>Spatial Analysis</h3>
+                        <p>Run spatial queries, buffer analysis, and overlay operations directly in the browser.</p>
+                    </div>
+                    <div class="icon-card">
+                        <div class="card-icon coral">
+                            <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" style="color: #FF7462;">
+                                <path d="m16.77,3.16c-.78-.76-1.83-1.19-2.9-1.16-1.09.01-2.11.45-2.87,1.23l-3.33,3.33c-.33.33-.6.71-.8,1.13-.97,2.03-.11,4.48,1.93,5.45.1.04.2.06.3.06.28,0,.54-.15.68-.41.19-.37.05-.83-.33-1.02-.26-.12-.5-.29-.71-.5-1-1-1-2.63,0-3.63l3.33-3.33c1-1,2.63-1,3.63,0,1,1,1,2.63,0,3.63l-1.29,1.29-.04.04c-.28.31-.27.79.04,1.07.31.29.79.27,1.07-.03l1.38-1.37c1.57-1.61,1.54-4.2-.07-5.78Z" stroke-width="0"/>
+                                <path d="m10.19,7.22c-.18.38-.02.83.36,1.01.26.13.5.29.71.5.48.48.75,1.13.75,1.82,0,.69-.27,1.33-.75,1.81l-3.33,3.33s-.08.09-.13.13c-.5.47-1.15.71-1.84.69-.69-.02-1.32-.31-1.79-.82-.97-1.04-.91-2.66.13-3.63l1.33-1.33c.14-.15.21-.34.2-.54,0-.2-.09-.39-.24-.53-.31-.29-.79-.27-1.07.03l-1.38,1.37c-1.57,1.61-1.54,4.2.07,5.78.77.75,1.78,1.16,2.85,1.16.02,0,.04,0,.05,0,1.09-.01,2.11-.45,2.87-1.23l3.33-3.33c.33-.33.6-.71.8-1.13.97-2.03.11-4.48-1.92-5.45-.18-.09-.39-.1-.58-.03-.09.03-.16.07-.23.13l-.2.25Z" stroke-width="0"/>
+                            </svg>
+                        </div>
+                        <h3>Integrations</h3>
+                        <p>Connect to WMS, WFS, ArcGIS, and import GeoJSON, Shapefiles, KML, and more.</p>
+                    </div>
+                    <div class="icon-card">
+                        <div class="card-icon yellow">
+                            <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" style="color: #FFC700;">
+                                <path d="m9.98,17.97c-1.48,0-2.97,0-4.45,0-1.94-.01-3.48-1.5-3.5-3.44-.03-2.42-.02-4.84,0-7.27.02-1.91,1.46-3.38,3.37-3.47.36-.02.55-.13.73-.45.49-.86,1.25-1.32,2.26-1.32,1.04,0,2.09,0,3.13,0,1.08-.01,1.87.47,2.38,1.39.15.27.32.36.61.37,1.94.08,3.42,1.51,3.46,3.45.04,2.42.05,4.84,0,7.27-.04,2.02-1.56,3.46-3.59,3.47-1.47.01-2.93,0-4.4,0h0Zm0-1.74c1.4,0,2.79.01,4.19,0,1.35-.02,2.04-.71,2.04-2.04,0-2.21.01-4.42,0-6.63,0-1.33-.72-2.07-2.05-1.99-.91.06-1.46-.19-1.72-1.08-.15-.52-.56-.73-1.1-.72-.9.01-1.8.02-2.71,0-.55-.01-.95.2-1.1.72-.27.92-.85,1.15-1.77,1.09-1.29-.09-1.98.67-1.98,1.98,0,2.18.05,4.35-.02,6.53-.04,1.35.77,2.2,2.19,2.16,1.34-.03,2.69,0,4.03,0Z" stroke-width="0"/>
+                                <path d="m6.45,10.83c.04-2.01,1.61-3.53,3.63-3.49,1.92.04,3.49,1.65,3.46,3.56-.03,1.97-1.66,3.57-3.62,3.54-1.94-.03-3.51-1.66-3.47-3.61Zm3.53,1.83c.97,0,1.81-.83,1.79-1.78-.01-.99-.82-1.78-1.8-1.76-.97.01-1.75.78-1.76,1.75-.01.98.79,1.8,1.77,1.8Z" stroke-width="0"/>
+                            </svg>
+                        </div>
+                        <h3>Embeddable Maps</h3>
+                        <p>Share maps publicly or embed interactive maps into websites and applications.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 4: Collaboration (Layout: Full-Bleed Image)
+             ========================================== -->
+        <div class="slide layout-fullbleed" data-slide="4">
+            <div class="slide-content">
+                <div class="fullbleed-text">
+                    <h2 class="animate-in">Collaboration &amp; Sharing</h2>
+                    <p class="animate-in">Atlas is built for teams. Every map is a shared workspace where people can work together in real time.</p>
+                    <ul class="bullet-list animate-in">
+                        <li><strong>Live cursors</strong> &mdash; see who's editing and where in real time</li>
+                        <li><strong>Granular permissions</strong> &mdash; viewer, editor, and admin roles</li>
+                        <li><strong>Comments &amp; annotations</strong> &mdash; discuss features directly on the map</li>
+                        <li><strong>Public sharing &amp; embedding</strong> &mdash; share maps with anyone via link or embed</li>
+                    </ul>
+                </div>
+                <div class="fullbleed-image animate-scale">
+                    <img src="assets/collaboration-workspace.jpg" alt="Atlas Collaboration">
+                </div>
+            </div>
+            <div class="slide-footer" style="left: 40px;">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 5: Map Editor (Layout: Two Column)
+             ========================================== -->
+        <div class="slide" data-slide="5">
+            <div class="dot-grid"></div>
+            <div class="slide-content">
+                <div class="two-col">
+                    <div class="col animate-left">
+                        <div class="badges-row" style="margin-bottom: 8px;">
+                            <span class="badge blue">Core Feature</span>
+                        </div>
+                        <h2 style="margin-bottom: 12px;">Map Editor</h2>
+                        <p style="margin-bottom: 20px;">A powerful, intuitive map editor that feels like a modern design tool. Create, style, and edit spatial data with precision.</p>
+                        <ul class="check-list yes">
+                            <li>Draw and edit features with snap-to geometry</li>
+                            <li>Advanced styling with visual controls</li>
+                            <li>Layer management with drag-and-drop</li>
+                            <li>Real-time preview of changes</li>
+                            <li>Keyboard shortcuts for power users</li>
+                            <li>Undo/redo for all operations</li>
+                        </ul>
+                    </div>
+                    <div class="col animate-right">
+                        <img src="assets/atlas_editor.png" alt="Map Editor Interface" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 6: Builder (Layout: Feature Highlight)
+             ========================================== -->
+        <div class="slide" data-slide="6" style="background: linear-gradient(180deg, var(--bg-01) 0%, var(--gradient-02-end) 100%);">
+            <div class="dot-grid"></div>
+            <div class="slide-content">
+                <div class="feature-highlight-wrapper">
+                    <div class="col animate-left" style="flex: 1; margin-right: 40px;">
+                        <img src="assets/atlas_interaktivt_dashboard.png" alt="Dashboard Builder" style="width: 100%; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
+                    </div>
+                    <div class="feature-detail animate-in" style="flex: 1;">
+                        <div class="badges-row" style="margin-bottom: 4px;">
+                            <span class="badge blue">No-Code</span>
+                        </div>
+                        <h2>Application Builder</h2>
+                        <p>Build custom GIS applications without writing code. Create dashboards, public portals, and data viewers tailored to your needs.</p>
+                        <div class="feature-pills">
+                            <div class="feature-pill">
+                                <span class="pill-icon">
+                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="m10,2C5.59,2,2,5.59,2,10s3.59,8,8,8,8-3.59,8-8c0-4.41-3.59-7.99-8-8Zm-2.26,13.9c-2.14-.82-3.69-2.77-4-5.06h2.47c.12,1.82.66,3.59,1.53,5.06Zm8.53-5.06c-.31,2.29-1.87,4.24-4.01,5.06.87-1.48,1.41-3.24,1.53-5.06h2.47Zm-12.53-1.68c.31-2.29,1.87-4.24,4-5.06-.87,1.47-1.41,3.24-1.53,5.06h-2.47Zm4.15,0c.16-2.07.9-3.95,2.11-5.35,1.21,1.4,1.95,3.28,2.11,5.35h-4.22Zm4.22,1.68c-.16,2.07-.9,3.95-2.11,5.35-1.21-1.4-1.95-3.28-2.11-5.35h4.22Zm4.15-1.68h-2.47c-.12-1.82-.66-3.59-1.53-5.06,2.14.83,3.69,2.77,4,5.06Z" stroke-width="0"/>
+                                    </svg>
+                                </span> Drag-and-drop interface
+                            </div>
+                            <div class="feature-pill">
+                                <span class="pill-icon">
+                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="m2.87,17.86c-.44,0-.79-.36-.79-.79s.36-.79.79-.79h.3c.06,0,.1-.04.1-.1v-3.56c0-.93.75-1.68,1.68-1.68h.89c.55,0,.99-.44.99-.99v-.89c0-.93.75-1.68,1.68-1.68h1.49c.55,0,.99-.44.99-.99v-.89c0-.93.75-1.68,1.68-1.68h2.38c.93,0,1.68.75,1.68,1.68v10.69c0,.06.04.1.1.1h.3c.44,0,.79.36.79.79s-.36.79-.79.79H2.87ZM13.56,5.39c-.55,0-.99.44-.99.99v8.91c0,.55.44.99.99.99h.59c.55,0,.99-.44.99-.99V6.38c0-.55-.44-.99-.99-.99h-.59Zm-4.16,3.56c-.55,0-.99.44-.99.99v5.34c0,.55.44.99.99.99h.59c.55,0,.99-.44.99-.99v-5.34c0-.55-.44-.99-.99-.99h-.59Zm-3.56,3.56c-.55,0-.99.44-.99.99v1.78c0,.55.44.99.99.99s.99-.44.99-.99v-1.78c0-.55-.44-.99-.99-.99Z" stroke-width="0"/>
+                                    </svg>
+                                </span> Custom dashboards
+                            </div>
+                            <div class="feature-pill">
+                                <span class="pill-icon">
+                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="m16.77,3.16c-.78-.76-1.83-1.19-2.9-1.16-1.09.01-2.11.45-2.87,1.23l-3.33,3.33c-.33.33-.6.71-.8,1.13-.97,2.03-.11,4.48,1.93,5.45.1.04.2.06.3.06.28,0,.54-.15.68-.41.19-.37.05-.83-.33-1.02-.26-.12-.5-.29-.71-.5-1-1-1-2.63,0-3.63l3.33-3.33c1-1,2.63-1,3.63,0,1,1,1,2.63,0,3.63l-1.29,1.29-.04.04c-.28.31-.27.79.04,1.07.31.29.79.27,1.07-.03l1.38-1.37c1.57-1.61,1.54-4.2-.07-5.78Z" stroke-width="0"/>
+                                        <path d="m10.19,7.22c-.18.38-.02.83.36,1.01.26.13.5.29.71.5.48.48.75,1.13.75,1.82,0,.69-.27,1.33-.75,1.81l-3.33,3.33s-.08.09-.13.13c-.5.47-1.15.71-1.84.69-.69-.02-1.32-.31-1.79-.82-.97-1.04-.91-2.66.13-3.63l1.33-1.33c.14-.15.21-.34.2-.54,0-.2-.09-.39-.24-.53-.31-.29-.79-.27-1.07.03l-1.38,1.37c-1.57,1.61-1.54,4.2.07,5.78.77.75,1.78,1.16,2.85,1.16.02,0,.04,0,.05,0,1.09-.01,2.11-.45,2.87-1.23l3.33-3.33c.33-.33.6-.71.8-1.13.97-2.03.11-4.48-1.92-5.45-.18-.09-.39-.1-.58-.03-.09.03-.16.07-.23.13l-.2.25Z" stroke-width="0"/>
+                                    </svg>
+                                </span> Embeddable widgets
+                            </div>
+                            <div class="feature-pill">
+                                <span class="pill-icon">
+                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="m13.43,18c-.25,0-.46-.16-.54-.39l-.3-.9c-.11-.34-.38-.61-.72-.72l-.9-.3c-.23-.08-.39-.3-.39-.54s.16-.46.39-.54l.9-.3c.34-.11.61-.38.72-.72l.3-.9c.08-.23.3-.39.54-.39s.46.16.54.39l.3.9c.11.34.38.61.72.72l.9.3c.23.08.39.3.39.54s-.16.46-.39.54l-.9.3c-.34.11-.61.38-.72.72l-.3.9c-.08.23-.3.39-.54.39Zm-.7-2.86c.28.18.52.42.7.7.18-.28.42-.52.7-.7-.28-.18-.52-.42-.7-.7-.18.28-.42.52-.7.7Zm-5.02.57c-.26,0-.48-.17-.55-.41l-.62-2.17c-.27-.96-1.01-1.69-1.96-1.96l-2.17-.62c-.25-.07-.41-.29-.41-.55s.17-.48.41-.55l2.17-.62c.96-.27,1.69-1.01,1.96-1.96l.62-2.17c.07-.25.29-.41.55-.41h0c.26,0,.48.17.55.41l.62,2.17c.27.96,1.01,1.69,1.96,1.96l2.17.62c.25.07.41.29.41.55s-.17.48-.41.55l-2.17.62c-.96.27-1.69,1.01-1.96,1.96,0,0,0,0,0,0l-.62,2.17c-.07.25-.29.41-.55.41Zm-3.06-5.71l.25.07c1.34.38,2.36,1.41,2.75,2.75l.07.25.07-.25h0c.38-1.34,1.41-2.37,2.75-2.75l.25-.07-.25-.07c-1.34-.38-2.36-1.41-2.75-2.75l-.07-.25-.07.25c-.38,1.34-1.41,2.36-2.75,2.75l-.25.07Zm9.92-1.14c-.26,0-.49-.18-.55-.43l-.2-.79c-.18-.72-.74-1.28-1.46-1.46l-.79-.2c-.25-.06-.43-.29-.43-.55s.18-.49.43-.55l.79-.2c.72-.18,1.27-.74,1.45-1.46l.2-.79c.06-.25.29-.43.55-.43s.49.18.55.43l.2.79c.18.72.74,1.28,1.46,1.46l.79.2c.25.06.43.29.43.55s-.18.49-.43.55l-.79.2c-.72.18-1.28.74-1.46,1.46l-.2.79c-.06.25-.29.43-.55.43Zm-1.07-3.43c.44.26.81.63,1.07,1.07.26-.44.63-.81,1.07-1.07-.44-.26-.81-.63-1.07-1.07-.26.44-.63.81-1.07,1.07Z" stroke-width="0"/>
+                                    </svg>
+                                </span> Branded portals
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 7: Workflows (Layout: Two Column)
+             ========================================== -->
+        <div class="slide" data-slide="7" style="background: linear-gradient(180deg, var(--bg-01) 0%, var(--gradient-01-start) 100%);">
+            <div class="dot-grid"></div>
+            <div class="slide-content">
+                <div class="two-col">
+                    <div class="col animate-left">
+                        <div class="badges-row" style="margin-bottom: 4px;">
+                            <span class="badge coral">Automation</span>
+                        </div>
+                        <h2>Automated Workflows</h2>
+                        <p>Design custom workflows that automate repetitive tasks, trigger notifications, and orchestrate complex processes across your geospatial data.</p>
+                        <div class="feature-pills">
+                            <div class="feature-pill">
+                                <span class="pill-icon">
+                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="m8.6,18c-.15,0-.29-.04-.43-.11-.35-.2-.53-.61-.42-1l1.35-4.95H3.77c-.31,0-.59-.18-.71-.47-.12-.28-.07-.61.14-.84L11.01,2.28c.27-.29.71-.36,1.06-.17.35.2.52.61.42.99l-1.36,4.98h5.33c.31,0,.59.18.71.47s.07.61-.14.84l-7.78,8.33c-.17.18-.41.28-.64.28Zm-3.04-7.61h4.56c.24,0,.47.11.62.3.15.19.2.44.13.67l-.9,3.32,4.71-5.05h-4.56c-.24,0-.47-.11-.62-.3-.15-.19-.2-.44-.13-.67l.9-3.32-4.71,5.05Zm6.58-7.05h0s0,0,0,0Z" stroke-width="0"/>
+                                    </svg>
+                                </span> Event-driven triggers
+                            </div>
+                            <div class="feature-pill">
+                                <span class="pill-icon">
+                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="m4.8,17.96c-.9,0-1.75-.48-2.21-1.26-.24-.4-.3-.94-.33-1.42-.03-.55-.03-1.27-.03-2.17v-4.59c0-.98,0-1.75.05-2.38.06-.73.19-1.25.42-1.72.42-.83,1.08-1.49,1.91-1.91.46-.23.99-.37,1.72-.42.63-.05,1.4-.05,2.38-.05h3.3c.82,0,1.46,0,1.99.04.6.04,1.05.13,1.45.3,1.08.45,1.92,1.28,2.36,2.36.16.4.26.84.3,1.45.04.53.04,1.17.04,1.99,0,.88,0,1.52-.04,2.05-.04.6-.13,1.05-.3,1.45-.45,1.08-1.28,1.92-2.36,2.36-.39.16-.84.26-1.45.3-.53.04-1.17.04-1.99.04h-2.34c-.43,0-.52,0-.59.02-.18.04-.35.12-.48.24-.06.05-.11.11-.37.46-.56.75-.99,1.33-1.35,1.74-.32.38-.68.76-1.11.94-.31.13-.64.2-.98.2Zm-.8-2.26c0,.06,0,.11.04.16.16.26.45.43.76.43.1,0,.21-.02.3-.05.03-.01.13-.09.16-.11.1-.09.22-.22.37-.39.32-.37.72-.91,1.28-1.65.23-.3.4-.53.6-.71.36-.32.79-.54,1.26-.63.24-.05.5-.05.79-.05h2.44c.84,0,1.44,0,1.9-.03.42-.03.7-.08.92-.17.67-.28,1.18-.79,1.46-1.46.09-.22.15-.51.17-.92.03-.46.03-1.07.03-1.9s0-1.44-.03-1.9c-.03-.42-.08-.7-.17-.92-.28-.67-.79-1.18-1.46-1.46-.22-.09-.5-.14-.92-.17-.47-.03-1.07-.03-1.9-.03h-3.23c-1,0-1.72,0-2.29.05-.5.04-.84.12-1.09.25-.51.26-.92.67-1.18,1.18-.13.25-.21.59-.25,1.09-.05.56-.05,1.28-.05,2.29v4.52c0,.94,0,1.61.03,2.1.01.23.03.41.06.53h0Z" stroke-width="0"/>
+                                    </svg>
+                                </span> Smart notifications
+                            </div>
+                            <div class="feature-pill">
+                                <span class="pill-icon">
+                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="m16.77,3.16c-.78-.76-1.83-1.19-2.9-1.16-1.09.01-2.11.45-2.87,1.23l-3.33,3.33c-.33.33-.6.71-.8,1.13-.97,2.03-.11,4.48,1.93,5.45.1.04.2.06.3.06.28,0,.54-.15.68-.41.19-.37.05-.83-.33-1.02-.26-.12-.5-.29-.71-.5-1-1-1-2.63,0-3.63l3.33-3.33c1-1,2.63-1,3.63,0,1,1,1,2.63,0,3.63l-1.29,1.29-.04.04c-.28.31-.27.79.04,1.07.31.29.79.27,1.07-.03l1.38-1.37c1.57-1.61,1.54-4.2-.07-5.78Z" stroke-width="0"/>
+                                        <path d="m10.19,7.22c-.18.38-.02.83.36,1.01.26.13.5.29.71.5.48.48.75,1.13.75,1.82,0,.69-.27,1.33-.75,1.81l-3.33,3.33s-.08.09-.13.13c-.5.47-1.15.71-1.84.69-.69-.02-1.32-.31-1.79-.82-.97-1.04-.91-2.66.13-3.63l1.33-1.33c.14-.15.21-.34.2-.54,0-.2-.09-.39-.24-.53-.31-.29-.79-.27-1.07.03l-1.38,1.37c-1.57,1.61-1.54,4.2.07,5.78.77.75,1.78,1.16,2.85,1.16.02,0,.04,0,.05,0,1.09-.01,2.11-.45,2.87-1.23l3.33-3.33c.33-.33.6-.71.8-1.13.97-2.03.11-4.48-1.92-5.45-.18-.09-.39-.1-.58-.03-.09.03-.16.07-.23.13l-.2.25Z" stroke-width="0"/>
+                                    </svg>
+                                </span> API integrations
+                            </div>
+                            <div class="feature-pill">
+                                <span class="pill-icon">
+                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="m10,2C5.59,2,2,5.59,2,10s3.59,8,8,8,8-3.59,8-8c0-4.41-3.59-7.99-8-8Zm-2.26,13.9c-2.14-.82-3.69-2.77-4-5.06h2.47c.12,1.82.66,3.59,1.53,5.06Zm8.53-5.06c-.31,2.29-1.87,4.24-4.01,5.06.87-1.48,1.41-3.24,1.53-5.06h2.47Zm-12.53-1.68c.31-2.29,1.87-4.24,4-5.06-.87,1.47-1.41,3.24-1.53,5.06h-2.47Zm4.15,0c.16-2.07.9-3.95,2.11-5.35,1.21,1.4,1.95,3.28,2.11,5.35h-4.22Zm4.22,1.68c-.16,2.07-.9,3.95-2.11,5.35-1.21-1.4-1.95-3.28-2.11-5.35h4.22Zm4.15-1.68h-2.47c-.12-1.82-.66-3.59-1.53-5.06,2.14.83,3.69,2.77,4,5.06Z" stroke-width="0"/>
+                                    </svg>
+                                </span> Custom logic
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col animate-right">
+                        <img src="assets/navi_workflows.png" alt="Atlas Workflows" style="width: 100%; max-width: 120%; transform: scale(1.15); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 8: Forms (Layout: Two Column)
+             ========================================== -->
+        <div class="slide" data-slide="8">
+            <div class="dot-grid"></div>
+            <div class="slide-content">
+                <div class="two-col">
+                    <div class="col animate-left">
+                        <img src="assets/atlas_skjema.png" alt="Form Builder" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+                    </div>
+                    <div class="col animate-right">
+                        <div class="badges-row" style="margin-bottom: 8px;">
+                            <span class="badge coral">Data Collection</span>
+                        </div>
+                        <h2 style="margin-bottom: 12px;">Custom Forms</h2>
+                        <p style="margin-bottom: 20px;">Create smart forms for structured data collection. Perfect for field surveys, inspections, and citizen reporting.</p>
+                        <ul class="check-list yes">
+                            <li>Drag-and-drop form builder</li>
+                            <li>Conditional logic and validation</li>
+                            <li>Photo and file attachments</li>
+                            <li>GPS location capture</li>
+                            <li>Offline support for field work</li>
+                            <li>Direct integration with map layers</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 9: Field App (Layout: Image Top)
+             ========================================== -->
+        <div class="slide" data-slide="9" style="background: linear-gradient(180deg, var(--bg-01) 0%, var(--gradient-03-end) 100%);">
+            <div class="dot-grid"></div>
+            <div class="slide-content">
+                <div class="image-top-wrapper">
+                    <img src="assets/List.png" alt="Field App" class="image-top-img animate-in" style="max-height: 520px; object-fit: contain; margin-bottom: 24px;">
+                    <div class="image-top-content animate-in">
+                        <div class="badges-row" style="margin-bottom: 8px;">
+                            <span class="badge blue">Mobile</span>
+                        </div>
+                        <h2 style="margin-bottom: 12px;">Field App</h2>
+                        <p style="max-width: 700px; margin-bottom: 16px;">Take Atlas into the field with our mobile app. Collect data, navigate, and sync seamlessly with your cloud workspace.</p>
+                        <div class="stats-row" style="margin-top: 24px;">
+                            <div class="stat-item">
+                                <div class="stat-number blue">iOS</div>
+                                <div class="stat-label">iPhone & iPad</div>
+                            </div>
+                            <div class="stats-divider"></div>
+                            <div class="stat-item">
+                                <div class="stat-number coral">Android</div>
+                                <div class="stat-label">Phone & Tablet</div>
+                            </div>
+                            <div class="stats-divider"></div>
+                            <div class="stat-item">
+                                <div class="stat-number yellow">Offline</div>
+                                <div class="stat-label">Full Support</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 10: Meet Navi (Layout: Big Statement)
+             ========================================== -->
+        <div class="slide layout-statement" data-slide="10">
+            <div class="dot-grid"></div>
+            <div class="slide-content">
+                <div class="statement-accent animate-in"></div>
+                <div class="badges-row animate-in" style="justify-content: center; margin-bottom: 16px;">
+                    <span class="badge blue">AI-powered</span>
+                </div>
+                <h1 class="animate-in">Meet Navi &mdash; your AI copilot for geospatial data.</h1>
+                <p class="subtitle animate-in">Ask questions, get insights, and run analyses using natural language. No GIS expertise required.</p>
+                <img src="assets/Navi_interface.png" alt="Navi Interface" class="animate-in" style="max-width: 800px; width: 100%; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); margin: 32px 0;">
+                <div class="statement-features animate-in">
+                    <div class="statement-feature">
+                        <div class="sf-icon blue">
+                            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="m4.8,17.96c-.9,0-1.75-.48-2.21-1.26-.24-.4-.3-.94-.33-1.42-.03-.55-.03-1.27-.03-2.17v-4.59c0-.98,0-1.75.05-2.38.06-.73.19-1.25.42-1.72.42-.83,1.08-1.49,1.91-1.91.46-.23.99-.37,1.72-.42.63-.05,1.4-.05,2.38-.05h3.3c.82,0,1.46,0,1.99.04.6.04,1.05.13,1.45.3,1.08.45,1.92,1.28,2.36,2.36.16.4.26.84.3,1.45.04.53.04,1.17.04,1.99,0,.88,0,1.52-.04,2.05-.04.6-.13,1.05-.3,1.45-.45,1.08-1.28,1.92-2.36,2.36-.39.16-.84.26-1.45.3-.53.04-1.17.04-1.99.04h-2.34c-.43,0-.52,0-.59.02-.18.04-.35.12-.48.24-.06.05-.11.11-.37.46-.56.75-.99,1.33-1.35,1.74-.32.38-.68.76-1.11.94-.31.13-.64.2-.98.2Zm-.8-2.26c0,.06,0,.11.04.16.16.26.45.43.76.43.1,0,.21-.02.3-.05.03-.01.13-.09.16-.11.1-.09.22-.22.37-.39.32-.37.72-.91,1.28-1.65.23-.3.4-.53.6-.71.36-.32.79-.54,1.26-.63.24-.05.5-.05.79-.05h2.44c.84,0,1.44,0,1.9-.03.42-.03.7-.08.92-.17.67-.28,1.18-.79,1.46-1.46.09-.22.15-.51.17-.92.03-.46.03-1.07.03-1.9s0-1.44-.03-1.9c-.03-.42-.08-.7-.17-.92-.28-.67-.79-1.18-1.46-1.46-.22-.09-.5-.14-.92-.17-.47-.03-1.07-.03-1.9-.03h-3.23c-1,0-1.72,0-2.29.05-.5.04-.84.12-1.09.25-.51.26-.92.67-1.18,1.18-.13.25-.21.59-.25,1.09-.05.56-.05,1.28-.05,2.29v4.52c0,.94,0,1.61.03,2.1.01.23.03.41.06.53h0Z" stroke-width="0"/>
+                            </svg>
+                        </div>
+                        Natural language search
+                    </div>
+                    <div class="statement-feature">
+                        <div class="sf-icon coral">
+                            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="m2.87,17.86c-.44,0-.79-.36-.79-.79s.36-.79.79-.79h.3c.06,0,.1-.04.1-.1v-3.56c0-.93.75-1.68,1.68-1.68h.89c.55,0,.99-.44.99-.99v-.89c0-.93.75-1.68,1.68-1.68h1.49c.55,0,.99-.44.99-.99v-.89c0-.93.75-1.68,1.68-1.68h2.38c.93,0,1.68.75,1.68,1.68v10.69c0,.06.04.1.1.1h.3c.44,0,.79.36.79.79s-.36.79-.79.79H2.87ZM13.56,5.39c-.55,0-.99.44-.99.99v8.91c0,.55.44.99.99.99h.59c.55,0,.99-.44.99-.99V6.38c0-.55-.44-.99-.99-.99h-.59Zm-4.16,3.56c-.55,0-.99.44-.99.99v5.34c0,.55.44.99.99.99h.59c.55,0,.99-.44.99-.99v-5.34c0-.55-.44-.99-.99-.99h-.59Zm-3.56,3.56c-.55,0-.99.44-.99.99v1.78c0,.55.44.99.99.99s.99-.44.99-.99v-1.78c0-.55-.44-.99-.99-.99Z" stroke-width="0"/>
+                            </svg>
+                        </div>
+                        Automated analysis
+                    </div>
+                    <div class="statement-feature">
+                        <div class="sf-icon yellow">
+                            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="m8.6,18c-.15,0-.29-.04-.43-.11-.35-.2-.53-.61-.42-1l1.35-4.95H3.77c-.31,0-.59-.18-.71-.47-.12-.28-.07-.61.14-.84L11.01,2.28c.27-.29.71-.36,1.06-.17.35.2.52.61.42.99l-1.36,4.98h5.33c.31,0,.59.18.71.47s.07.61-.14.84l-7.78,8.33c-.17.18-.41.28-.64.28Zm-3.04-7.61h4.56c.24,0,.47.11.62.3.15.19.2.44.13.67l-.9,3.32,4.71-5.05h-4.56c-.24,0-.47-.11-.62-.3-.15-.19-.2-.44-.13-.67l.9-3.32-4.71,5.05Zm6.58-7.05h0s0,0,0,0Z" stroke-width="0"/>
+                            </svg>
+                        </div>
+                        Insight generation
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 11: Use Case - Recreating Skogsskader in Atlas (Layout: Section Divider)
+             ========================================== -->
+        <div class="slide layout-divider" data-slide="11" style="background: linear-gradient(135deg, var(--gradient-01-start), var(--gradient-01-end));">
+            <div class="dot-grid"></div>
+            <div class="slide-content" style="align-items: center; text-align: center;">
+                <div class="divider-accent animate-in"></div>
+                <h1 class="animate-in" style="max-width: 900px;">Recreating Skogsskader.no in Atlas</h1>
+            </div>
+            <div class="slide-footer">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 12: Skogsskader.no Overview (Layout: Image Top)
+             ========================================== -->
+        <div class="slide" data-slide="12" style="background: linear-gradient(180deg, var(--bg-01) 0%, var(--gradient-01-start) 100%);">
+            <div class="dot-grid"></div>
+            <div class="slide-content">
+                <div class="image-top-wrapper">
+                    <div class="image-top-visual animate-in">
+                        <img src="assets/skogsskader.png" alt="Skogsskader.no current system" style="width: 100%; max-width: 900px; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
+                    </div>
+                    <div class="image-top-content animate-in">
+                        <div class="badges-row" style="margin-bottom: 8px;">
+                            <span class="badge blue">Nibio Bruksområde</span>
+                        </div>
+                        <h2 style="margin-bottom: 12px;">Skogsskader.no</h2>
+                        <p style="max-width: 700px; margin-bottom: 16px;">Nibios system for rapportering av skogsskader lar brukere rapportere og spore skoghelsesaker.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 13: Atlas Form Builder (Layout: Image Top)
+             ========================================== -->
+        <div class="slide" data-slide="13">
+            <div class="dot-grid"></div>
+            <div class="slide-content">
+                <div class="image-top-wrapper">
+                    <div class="image-top-visual animate-in">
+                        <img src="assets/atlas_skjema.png" alt="Atlas form builder" style="width: 100%; max-width: 900px; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
+                    </div>
+                    <div class="image-top-content animate-in">
+                        <div class="badges-row" style="margin-bottom: 8px;">
+                            <span class="badge blue">Atlas-funksjon</span>
+                        </div>
+                        <h2 style="margin-bottom: 12px;">Tilpassede skjemaer for datainnsamling</h2>
+                        <p style="max-width: 700px; margin-bottom: 16px;">Bygg tilpassede skjemaer for skogsskaderapportering med dra-og-slipp-enkelhet. Definer felt, valideringsregler og arbeidsflyter uten koding.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 14: Mobile Field Collection (Layout: Two Column)
+             ========================================== -->
+        <div class="slide" data-slide="14" style="background: linear-gradient(180deg, var(--bg-01) 0%, var(--gradient-03-end) 100%);">
+            <div class="dot-grid"></div>
+            <div class="slide-content">
+                <div class="two-col">
+                    <div class="col animate-left">
+                        <div class="badges-row" style="margin-bottom: 8px;">
+                            <span class="badge coral">Atlas-funksjon</span>
+                        </div>
+                        <h2 style="margin-bottom: 12px;">Feltdatainnsamling</h2>
+                        <p style="margin-bottom: 20px;">Samle inn skogsskaderapporter direkte i felt ved hjelp av mobile enheter med full frakoblet støtte.</p>
+                    </div>
+                    <div class="col animate-right">
+                        <img src="assets/List.png" alt="Atlas mobil app" style="width: 100%; max-height: 600px; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 15: Interactive Dashboards (Layout: Image Top)
+             ========================================== -->
+        <div class="slide" data-slide="15" style="background: linear-gradient(180deg, var(--bg-01) 0%, var(--gradient-04-end) 100%);">
+            <div class="dot-grid"></div>
+            <div class="slide-content">
+                <div class="image-top-wrapper">
+                    <div class="image-top-visual animate-in">
+                        <img src="assets/atlas_interaktivt_dashboard.png" alt="Interactive dashboard" style="width: 100%; max-width: 900px; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
+                    </div>
+                    <div class="image-top-content animate-in">
+                        <div class="badges-row" style="margin-bottom: 8px;">
+                            <span class="badge coral">Analyse</span>
+                        </div>
+                        <h2 style="margin-bottom: 12px;">Interaktiv Kartapplikasjon</h2>
+                        <p style="max-width: 700px;">Overvåk trender, mønstre og hotspots for skogsskader. Diagrammer og kart oppdateres i sanntid når nye rapporter kommer inn.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SLIDE 16: AI-Powered Categorization (Layout: Two Column)
+             ========================================== -->
+        <div class="slide" data-slide="16">
+            <div class="dot-grid"></div>
+            <div class="slide-content">
+                <div class="two-col">
+                    <div class="col animate-left">
+                        <div class="badges-row" style="margin-bottom: 8px;">
+                        </div>
+                        <h2 style="margin-bottom: 12px;">AI-kategorisering</h2>
+                        <p style="margin-bottom: 20px;">AI agenten kan utomatisk kategorisere skadetyper fra bilder og beskrivelser, og sikre konsistens på tvers av rapporter.</p>
+                        <img src="assets/atlas_ai_kategorisering.png" alt="AI-kategorisering" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+                    </div>
+                    <div class="col animate-right">
+                        <div class="badges-row" style="margin-bottom: 8px;">
+                        </div>
+                        <h2 style="margin-bottom: 12px;">Smart feltassistanse</h2>
+                        <p style="margin-bottom: 20px;">AI agenten kan også hjelpe feltarbeidere med å fylle ut rapporter ved å foreslå verdier basert på lokasjon, sesong og historiske data.</p>
+                        <img src="assets/atlas_ai_felt.png" alt="AI-feltassistanse" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <div class="mini-globe"><img src="assets/atlas-symbol.png" alt="Atlas"></div>
+                <span>atlas.co</span>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-controls">
+        <button class="nav-btn" id="prevBtn" onclick="prevSlide()" disabled>&#8592;</button>
+        <span class="slide-counter" id="slideCounter">1 / 16</span>
+        <button class="nav-btn" id="nextBtn" onclick="nextSlide()">&#8594;</button>
+    </div>
+
+    <script>
+        /* ============================================
+           Slide Navigation
+           ============================================ */
+        let currentSlide = 1;
+        const totalSlides = 16;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach(slide => {
+                const slideNum = parseInt(slide.dataset.slide);
+                slide.classList.remove('active', 'prev');
+                if (slideNum === n) {
+                    slide.classList.add('active');
+                } else if (slideNum < n) {
+                    slide.classList.add('prev');
+                }
+            });
+
+            currentSlide = n;
+            document.getElementById('slideCounter').textContent = `${n} / ${totalSlides}`;
+            document.getElementById('prevBtn').disabled = n === 1;
+            document.getElementById('nextBtn').disabled = n === totalSlides;
+
+            // Progress bar
+            const progress = ((n - 1) / (totalSlides - 1)) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) showSlide(currentSlide - 1);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(1);
+    </script>
+</body>
+</html>
